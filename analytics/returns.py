@@ -269,7 +269,8 @@ def portfolio_returns(
     # align
     common_assets = [a for a in w.index if a in asset_returns.columns]
     w = w[common_assets] / w[common_assets].sum()  # normalise to 1
-    port = (asset_returns[common_assets] * w).sum(axis=1)
+    aligned = asset_returns[common_assets].dropna()
+    port = (aligned * w).sum(axis=1)
     port.name = "Portfolio"
     return port
 

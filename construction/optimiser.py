@@ -80,6 +80,7 @@ def compute_cov_matrix(
 
     Returns a DataFrame indexed and columned by asset names.
     """
+    returns = returns.dropna()
     cov = returns.cov() * TRADING_DAYS_PER_YEAR
     if shrink:
         cov_arr = ledoit_wolf_shrinkage(cov.values)
@@ -337,9 +338,17 @@ def efficient_frontier(
 
     Returns a DataFrame with columns: Ann. Return, Ann. Volatility, Sharpe.
     """
+    returns = returns.dropna()
+    if returns.empty or len(returns) < len(returns.columns) + 5:
+        return pd.DataFrame()
+
     cov    = compute_cov_matrix(returns, shrink=shrink)
     Sigma  = _ensure_psd(cov.values)
     mu_ann = returns.mean().values * TRADING_DAYS_PER_YEAR
+
+    if np.any(np.isnan(mu_ann)) or np.any(np.isinf(mu_ann)):
+        return pd.DataFrame()
+
     n      = len(returns.columns)
     bounds = [(min_weight, max_weight)] * n
     w0     = np.ones(n) / n

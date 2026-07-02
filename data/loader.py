@@ -136,8 +136,8 @@ def compute_returns(prices: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     log_returns    : ln(P_t / P_{t-1})
     Both have the same index/columns as prices, with the first row dropped.
     """
-    simple = prices.pct_change().dropna()
-    log    = np.log(prices / prices.shift(1)).dropna()
+    simple = prices.pct_change().replace([np.inf, -np.inf], np.nan).dropna()
+    log    = np.log(prices / prices.shift(1)).replace([np.inf, -np.inf], np.nan).dropna()
     return simple, log
 
 

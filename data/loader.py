@@ -65,6 +65,9 @@ def _fetch_raw(tickers: list[str], start: str, end: Optional[str]) -> pd.DataFra
 
 def _clean_prices(prices: pd.DataFrame) -> pd.DataFrame:
     """Forward-fill gaps then drop any dates where ANY ticker is still NaN."""
+    if hasattr(prices.index, "tz") and prices.index.tz is not None:
+        prices.index = prices.index.tz_localize(None)
+    prices.index = pd.to_datetime(prices.index.date)
     prices = prices.ffill()
     prices = prices.dropna()
     return prices

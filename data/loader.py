@@ -60,6 +60,11 @@ def _fetch_raw(tickers: list[str], start: str, end: Optional[str]) -> pd.DataFra
         # single ticker returns flat columns
         prices = raw[["Close"]].rename(columns={"Close": tickers[0]})
 
+    # Normalize to tz-naive date-only index so joins work on all platforms
+    if hasattr(prices.index, "tz") and prices.index.tz is not None:
+        prices.index = prices.index.tz_localize(None)
+    prices.index = pd.to_datetime(prices.index.date)
+
     return prices
 
 

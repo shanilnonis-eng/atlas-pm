@@ -67,6 +67,16 @@ returns = st.session_state["simple_returns"]
 bench_returns = st.session_state["bench_returns"]
 rf_returns    = st.session_state["rf_returns"]
 
+# DEBUG — remove after diagnosis
+with st.expander("DEBUG: session state info", expanded=True):
+    st.write(f"returns shape: {returns.shape}")
+    st.write(f"returns NaN count: {int(returns.isna().sum().sum())}")
+    st.write(f"returns inf count: {int((returns == float('inf')).sum().sum() + (returns == float('-inf')).sum().sum())}")
+    st.write(f"bench_returns len: {len(bench_returns)}")
+    st.write(f"rf_returns len: {len(rf_returns)}")
+    st.write(f"returns index[0]: {returns.index[0] if len(returns) > 0 else 'EMPTY'}")
+    st.write(f"returns columns: {list(returns.columns)}")
+
 # ---------------------------------------------------------------------------
 # Sidebar — model configuration
 # ---------------------------------------------------------------------------
